@@ -90,9 +90,9 @@ uint8_t	 ifreq = 0;								// Channel Index
 # Bibliotecas Necessárias 
 
 - gBase64 library: https://github.com/adamvr/arduino-base64);
-- Time library (http://playground.arduino.cc/code/time)
+- Time library (http://playground.arduino.cc/code/time);
 - Arduino JSON v6; 
-- SimpleTimer; ot yet used, but reserved for interrupt and timing;
+- SimpleTimer;
 - ESP8266 Web Server;
 - Streaming library;
 - AES library;
@@ -102,6 +102,7 @@ uint8_t	 ifreq = 0;								// Channel Index
 
 # Futuras implantações
 
+- Tradução de todos comentários do código fonte para português (Brasil);
 - WiFi Manager com ESP-32;
 - OTA (Over The Air);
 - Otimização do uso do SPIFFS;
