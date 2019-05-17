@@ -2,8 +2,8 @@
 
 Este é um fork do projeto ESP2 SCH Gateway com algumas modificações. Essas são:
 
-* Atualização para a versão 6 da biblioteca Arduino Json;
-* Alteração para o servidor NTP utilizado no Brasil;
+- Atualização para a versão 6 da biblioteca Arduino Json;
+- Alteração para o servidor NTP utilizado no Brasil;
 - Inserção de comentários no código Fonte;
 - Adaptação para frequência de 915MHz utilizada no Brasil.
 
@@ -17,7 +17,23 @@ Este repositório foi adaptado para o uso no Brasil para criar um Gateway DIY Si
 
 Para utilizar este código fonte, faça o download do arquivo .zip, contendo os arquivos .ino e .h e as bibliotecas necessárias para funcionamento. Copie as bibliotecas para o diretório: ~/Documents/Arduino/libraries, ou conforme for salvo em sua máquina. No código fonte será necessário alterar apenas 2 arquivos para o funcionamento.
 
- ## SP-sc-gway.h  
+ ## ESP-sc-gway.h  
+ 
+ O ESP-sc-gway.h contém todos os arquivos de configuração, sendo necessário alterar os seguintes itens:
+ 
+ ### Definições Acess point
+
+```c
+#ifdef ESP32BUILD
+#define AP_NAME "Coloque o nome do seu AP"
+#else
+#define AP_NAME "Coloque o nome do seu AP"
+#endif
+#define AP_PASSWD "12345678" 
+´´´
+
+
+ 
 
 # Bibliotecas Necessárias 
 
