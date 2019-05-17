@@ -99,6 +99,7 @@ uint8_t	 ifreq = 0;								// Channel Index
 - Time;
 - ESP8266_Oled_Driver_for_SSD1306_display;
 - WebServer TNG;
+- WiFi ESP.
 
 # Futuras implantações
 
