@@ -60,54 +60,55 @@ int sendPacket(uint8_t *buf, uint8_t length) {
   //		CFList (fill to 16 bytes)
 
   int i = 0;
-  StaticJsonDocument<312> doc;
+  int i = 0;
+  StaticJsonDocument<312> jsonBuffer;
   char * bufPtr = (char *) (buf);
   buf[length] = 0;
 
-#if DUSB >= 1
+#if DUSB>=1
   if (debug >= 2) {
     Serial.println((char *)buf);
     Serial.print(F("<"));
     Serial.flush();
   }
 #endif
-
   // Use JSON to decode the string after the first 4 bytes.
   // The data for the node is in the "data" field. This function destroys original buffer
-  DeserializationError error = deserializeJson(doc, bufPtr);
-
-  // Test if parsing succeeds.
+  auto error = deserializeJson(jsonBuffer, bufPtr);
 
   if (error) {
-#if DUSB >= 1
-    Serial.print(F("sendPacket:: ERROR Json Decode"));
-    Serial.println(error.c_str());
-    if (debug >= 2) {
-      Serial.print(':');
-      Serial.println(bufPtr);
+#if DUSB>=1
+    if (( debug >= 1) && (pdebug & P_TX)) {
+      Serial.print (F("T sendPacket:: ERROR Json Decode"));
+      if (debug >= 2) {
+        Serial.print(':');
+        Serial.println(bufPtr);
+      }
+      Serial.flush();
     }
-    Serial.flush();
 #endif
     return (-1);
   }
-  delay(1);
+  yield();
 
   // Meta Data sent by server (example)
   // {"txpk":{"codr":"4/5","data":"YCkEAgIABQABGmIwYX/kSn4Y","freq":868.1,"ipol":true,"modu":"LORA","powe":14,"rfch":0,"size":18,"tmst":1890991792,"datr":"SF7BW125"}}
 
-  const char * data  = doc["txpk"]["data"];
-  uint8_t psize   = doc["txpk"]["size"];
-  bool ipol     = doc["txpk"]["ipol"];
-  uint8_t powe   = doc["txpk"]["powe"];
-  uint32_t tmst   = (uint32_t) doc["txpk"]["tmst"].as<unsigned long>();
+  // Used in the protocol of Gateway:
+  JsonObject root = jsonBuffer.to<JsonObject>();
+  const char * data = root["txpk"]["data"];     // Downstream Payload
+  uint8_t psize   = root["txpk"]["size"];
+  bool ipol     = root["txpk"]["ipol"];
+  uint8_t powe    = root["txpk"]["powe"];     // e.g. 14 or 27
+  LoraDown.tmst   = (uint32_t) root["txpk"]["tmst"].as<unsigned long>();
+  const float ff    = root["txpk"]["freq"];     // eg 869.525
 
-  // Not used in the protocol:
-  const char * datr = doc["txpk"]["datr"];     // eg "SF7BW125"
-  const float ff    = doc["txpk"]["freq"];     // eg 869.525
-  const char * modu = doc["txpk"]["modu"];     // =="LORA"
-  const char * codr = doc["txpk"]["codr"];
-  //if (doc"txpk"].containsKey("imme") ) {
-  //  const bool imme = doc"txpk"]["imme"];     // Immediate Transmit (tmst don't care)
+  // Not used in the protocol of Gateway TTN:
+  const char * datr = root["txpk"]["datr"];     // eg "SF7BW125"
+  const char * modu = root["txpk"]["modu"];     // =="LORA"
+  const char * codr = root["txpk"]["codr"];     // e.g. "4/5"
+  //if (root["txpk"].containsKey("imme") ) {
+  //  const bool imme = root["txpk"]["imme"];     // Immediate Transmit (tmst don't care)
   //}
 
   if (data != NULL) {
